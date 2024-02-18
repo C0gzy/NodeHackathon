@@ -21,26 +21,29 @@ async function interactWithAssistant(Input) {
     });
 
     while (true) {
-      thread = await openai.beta.threads.retrieve(thread.id);
-      console.log(thread);
-      if (thread.status !== 'processing') {
-        break;
+      const messages = await openai.beta.threads.messages.list(thread.id);
+      assistantMessage = messages.data.find(message => message.role === 'assistant');
+      if (assistantMessage) {
+        console.log(assistantMessage.content.length);
+        if (assistantMessage.content.length > 0) {
+          console.log(assistantMessage.content);
+          break;
+        }
+        
       }
       await new Promise(resolve => setTimeout(resolve, 2000)); // Wait for 2 seconds before checking again
     }
     //await new Promise(resolve => setTimeout(resolve, 2000));
 
     // Here we await the result of messages.list before trying to access its properties
-    const messages = await openai.beta.threads.messages.list(thread.id);
+    console.log(assistantMessage);
 
     // Ensure messages.data exists before attempting to access it
   
-    if (messages.data) {
-      const assistantMessage = messages.data.find(message => message.role === "assistant");
-      if (assistantMessage) {
-        console.log(assistantMessage.content);
-        return assistantMessage.content;
-      }
+
+    if (assistantMessage) {
+      console.log(assistantMessage.content);
+      return assistantMessage.content;
 
     } else {
       console.log("No messages found or incorrect response format.");

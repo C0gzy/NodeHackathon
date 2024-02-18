@@ -1,21 +1,184 @@
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js" type="module"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js" type="module"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js" type="module"></script>
+
+<script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
+  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyC74UJpk7aG0If_VkBUeIht2IPPPLBUwZc",
+      authDomain: "hackathon-login-37cba.firebaseapp.com",
+      projectId: "hackathon-login-37cba",
+      storageBucket: "hackathon-login-37cba.appspot.com",
+      messagingSenderId: "985209358396",
+      appId: "1:985209358396:web:d5a869addf41c985469b39",
+      measurementId: "G-3HKJ576C25"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  document.getElementById('register-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('register-email').value;
+    const password = document.getElementById('register-password').value;
+
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+      console.log('User registered');
+      document.getElementById('login-form').style.display = 'block'; // Show login form
+      document.getElementById('register-form').style.display = 'none'; // Hide register form
+    } catch (error) {
+      console.error('Error in user registration:', error.code, error.message);
+    }
+  });
+
+  document.getElementById('login-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = document.getElementById('login-email').value;
+  const password = document.getElementById('login-password').value;
+
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+    console.log('User logged in');
+    
+  } catch (error) {
+    console.error('Error in user login:', error.code, error.message);
+    // Optionally, show an error message to the user
+  }
+});
+
+
+  document.addEventListener('DOMContentLoaded', function() {
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      console.log('User is signed in, UID:', user.uid);
+      window.location.href = 'MainPage.html?UID='+user.uid; // Redirect to index.html on successful login
+      // Optionally redirect logged in users to index.html or another page
+      // window.location.href = 'index.html';
+    } else {
+      console.log('User is signed out.');
+      document.getElementById('login-form').style.display = 'block'; // Ensure login form is visible if not signed in
+      document.getElementById('register-form').style.display = 'none'; // Keep register form hidden
+    }
+  });
+});
+
+
+document.querySelector('.toggle-form').addEventListener('click', function() {
+    const registerForm = document.getElementById('register-form');
+    const loginForm = document.getElementById('login-form');
+    const toggleText = document.querySelector('.toggle-form');
+
+    if (registerForm.style.display === 'block') {
+      registerForm.style.display = 'none';
+      loginForm.style.display = 'block';
+      toggleText.textContent = 'Register Here'; // If the register form is visible, clicking will show the login form next
+    } else {
+      registerForm.style.display = 'block';
+      loginForm.style.display = 'none';
+      toggleText.textContent = 'Login Here'; // If the register form is hidden, clicking will show the register form next
+    }
+  });
+
+  // Initially set the correct form visibility and link text
+  document.addEventListener('DOMContentLoaded', () => {
+    const toggleText = document.querySelector('.toggle-form');
+    toggleText.textContent = 'Register Here'; // Default text assuming login form is shown first
+  });
+</script>
+
+
+
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
-    <head>
-        <link rel="stylesheet" href="Style.css">
-        
-        <title> Expense advAIzor </title>
-        
-    </head>
-    <body>
-        <div class="container">
-            <textarea class="output-box" id="AIResponse" placeholder="AI response will appear here..." readonly></textarea>
-            <textarea class="input-box" id="userInput" placeholder="Type your query here..."></textarea>
-            
-        </div>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login and Registration</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f8f7; /* Light green background */
+    color: #333;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Full viewport height */
+    margin: 0; /* Remove default margin */
+  }
 
-        <script src="MainScripts/main.js"></script>
-    </body>
-   
+  .container {
+    width: 100%;
+    max-width: 400px; /* Make forms smaller */
+  }
 
+  h2 {
+    color: #006a4e; /* Darker shade of green for headings */
+    text-align: center;
+  }
 
-</html>
+  form {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+  }
+
+  input[type="email"], input[type="password"] {
+    width: calc(100% - 22px);
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+
+  button {
+    background-color: #4CAF50; /* Green color for buttons */
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+  }
+
+  button:hover {
+    background-color: #45a049;
+  }
+
+  #register-form {
+    display: none;
+  }
+
+  .toggle-form {
+    color: #006a4e;
+    cursor: pointer;
+    text-align: center;
+    display: block; /* Make the toggle link block-level for centering */
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div id="register-section">
+    <h2>Register</h2>
+    <form id="register-form">
+      <input type="email" id="register-email" placeholder="Email" required>
+      <input type="password" id="register-password" placeholder="Password" required>
+      <button type="submit">Register</button>
+    </form>
+    <p class="toggle-form">Register Here</p>
+  </div>
+
+  <h2>Login</h2>
+  <form id="login-form">
+    <input type="email" id="login-email" placeholder="Email" required>
+    <input type="password" id="login-password" placeholder="Password" required>
+    <button type="submit">Login</button>
+  </form>
+</div>

@@ -8,8 +8,8 @@ const AI = require('./AI');
 const server = http.createServer(function(req, res) {
   const filename = req.url.split('/');
   const FunReq = req.url.split('?');
-  console.log(FunReq[0]);
-  console.log(decodeURI(FunReq[1]));
+  
+  console.log("mm " + FunReq[0]);
 
   if (FunReq[0] === '/run-ai' && req.method === 'GET') {
     AI.RunAI(FunReq[1]).then(response => {
@@ -46,7 +46,24 @@ const server = http.createServer(function(req, res) {
       res.statusCode = 200;
       res.setHeader('Content-Type', 'text/json');
       res.write(fs.readFileSync("./StarterDatabase.json"));
-    }else{
+    }else if (FunReq[0] == "/MainPage.html"){
+
+      console.log(FunReq[1].length);
+      if ((FunReq[1] == undefined) || (FunReq[1].length != 32)) {
+
+        res.statusCode = 404;
+        res.write('404 Not Found');
+
+      }else{
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'text/html');
+        const html = fs.readFileSync('./MainPage.html');
+        res.write(html);
+      }
+
+
+    }
+    else{
       switch (req.url) {
         case "/Style.css":
           res.statusCode = 200;
