@@ -99,10 +99,47 @@ const averageMidAd2 = {
 }
 
 var currentUser = {
-    totalcost: 1000,
-    income: 2500,
+    totalcost: 0,
+    income: 0,
     netgain: 0,
     //savings: 0,
+}
+
+window.onload = function() {
+    currentUser.income = prompt('What is your monthly income?');
+    currentUser.totalcost = prompt('What is your monthly expenditure?');
+    
+
+    const xValues = ["Food And Clothes", "Life Insurance", "Healthcare", "housingCosts" , "Transport", "Life Activities","Netgain_perc"];
+    const yValues = pieChartPerc(averageMidAd);
+    const barColors = [
+    "#b91d47",
+    "#00aba9",
+    "#2b5797",
+    "#e8c3b9",
+    "#1e7145",
+    "#f29999",
+    "#00aba9"
+    ];
+
+    new Chart("myChart", {
+    type: "pie",
+    data: {
+        labels: xValues,
+        datasets: [{
+        backgroundColor: barColors,
+        data: yValues
+        }]
+    },
+    options: {
+        title: {
+        display: true,
+        text: "World Wide Wine Production 2018"
+        }
+    }
+    });
+
+
 }
 
 
@@ -150,33 +187,6 @@ document.querySelector('.input-box').addEventListener('keydown', function(event)
 });
 
 
-const xValues = ["Food And Clothes", "Life Insurance", "Healthcare", "Transport", "Life Activities","housingCosts"];
-const yValues = pieChartPerc(averageInfants);
-const barColors = [
-  "#b91d47",
-  "#00aba9",
-  "#2b5797",
-  "#e8c3b9",
-  "#1e7145",
-  "#f29999"
-];
-
-new Chart("myChart", {
-  type: "pie",
-  data: {
-    labels: xValues,
-    datasets: [{
-      backgroundColor: barColors,
-      data: yValues
-    }]
-  },
-  options: {
-    title: {
-      display: true,
-      text: "World Wide Wine Production 2018"
-    }
-  }
-});
 
 
 
