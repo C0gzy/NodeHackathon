@@ -1,4 +1,16 @@
 var AIresponse ;
+const queryString = window.location.search;
+const urlParams = new URLSearchParams(queryString);
+
+window.onload = function() {
+    const uid = urlParams.get('UID')
+    fetch(`/GetUserData?input=${encodeURIComponent(uid)}`)
+      .then(response => response.json())
+      .then(data => {
+            console.log(data);
+      })
+}
+
 //hard coded modular db
 const averageInfants = {
     feedCloths: 50,
@@ -105,24 +117,33 @@ var currentUser = {
     //savings: 0,
 }
 
-window.onload = function() {
-    currentUser.income = prompt('What is your monthly income?');
-    currentUser.totalcost = prompt('What is your monthly expenditure?');
-    
-
-    const xValues = ["Food And Clothes", "Life Insurance", "Healthcare", "housingCosts" , "Transport", "Life Activities","Netgain_perc"];
-    const yValues = pieChartPerc(averageMidAd);
-    const barColors = [
+const xValues = ["Food And Clothes", "Life Insurance", "Healthcare", "housingCosts" , "Transport", "Life Activities","Netgain_perc","NetGain"];
+const barColors = [
     "#b91d47",
     "#00aba9",
     "#2b5797",
     "#e8c3b9",
     "#1e7145",
     "#f29999",
-    "#00aba9"
+    "#00aba9",
+    '#32a852'
     ];
 
-    new Chart("myChart", {
+let myChart = null;
+
+
+function sumbit() {
+    currentUser.income = document.getElementById("IncomeThisMonth").value;
+    currentUser.totalcost = document.getElementById("ExpenseThisMonth").value;
+    
+    
+    const yValues = pieChartPerc(averageMidAd);
+
+    if (myChart != null) {
+        myChart.destroy();
+    }
+
+    myChart = new Chart("myChart", {
     type: "pie",
     data: {
         labels: xValues,
@@ -134,28 +155,27 @@ window.onload = function() {
     options: {
         title: {
         display: true,
-        text: "World Wide Wine Production 2018"
+        text: "Suggested Expenditure"
         }
     }
     });
-
-
 }
 
-
 function canSpend(age) {
-    if (age.totalcost >= income) {
+    if ((age.totalcost >= currentUser.income) || (currentUser.totalcost >= currentUser.income) ) {
         console.log('You are going in dept or net zero this month');
-        currentUser.netgain += (currentUser.income - age.totalcost) //provide the amount of net negative dept you is in
+        currentUser.netgain = 0;
+        document.getElementById("Message").innerHTML = "You are going in debt <br/> or net zero this month";
+        //currentUser.netgain = (currentUser.income - age.totalcost) / currentUser.income//provide the amount of net negative dept you is in
     } else {
-        currentUser.netgain += (currentUser.income - age.totalcost) //positive net gain
+        currentUser.netgain = (currentUser.income - age.totalcost) / currentUser.income //positive net gain
         //currentUser.savings += currentUser.income - currentUser.netgain
-        pieChartPerc(age)
     }
     
 }
 
 function pieChartPerc(age) {
+    canSpend(age);
     //percentage of a piechart out of 360.
     feedCloth_perc = age.feedCloths / currentUser.income
     Life_insurance_perc = age.Life_insurance / currentUser.income
@@ -165,7 +185,7 @@ function pieChartPerc(age) {
     lifeActivities_perc = age.lifeActivities / currentUser.income
     Netgain_perc = currentUser.negtain/currentUser.income
 
-    return [feedCloth_perc, Life_insurance_perc, medicalCosts_perc, housingCosts_perc, Transport_perc, lifeActivities_perc, Netgain_perc]
+    return [feedCloth_perc, Life_insurance_perc, medicalCosts_perc, housingCosts_perc, Transport_perc, lifeActivities_perc, Netgain_perc , currentUser.netgain]
     
 }
 

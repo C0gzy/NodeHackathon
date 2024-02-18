@@ -1,7 +1,7 @@
 const fs = require('fs');
 const http = require('http');
 const AI = require('./AI');
-
+//const Userinfo = require('./Userinfo');
 
 //console.log(AI.RunAI());
 //Server Initial Response
@@ -22,7 +22,21 @@ const server = http.createServer(function(req, res) {
       return;
   });
   return;
+}
+  /*
+  }else if(FunReq[0] === '/GetUserData' && req.method === 'GET'){
+    Userinfo.GetData(FunReq[1]).then(response => {
+      console.log(response);
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ response }));
+    }).catch(err => {
+      console.log(err);
+      return;
+  });
+  return;
   }
+  */
+  
 
   try{
     console.log(req.url);
