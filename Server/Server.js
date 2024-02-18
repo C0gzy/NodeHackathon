@@ -1,9 +1,29 @@
 const fs = require('fs');
 const http = require('http');
+const AI = require('./AI');
 
+
+//console.log(AI.RunAI());
 //Server Initial Response
 const server = http.createServer(function(req, res) {
   const filename = req.url.split('/');
+  const FunReq = req.url.split('?');
+  console.log(FunReq[0]);
+  console.log(decodeURI(FunReq[1]));
+
+  if (FunReq[0] === '/run-ai' && req.method === 'GET') {
+    AI.RunAI(FunReq[1]).then(response => {
+      console.log(response);
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      
+      res.end(JSON.stringify({ response }));
+    }).catch(err => {
+      console.log(err);
+      return;
+  });
+  return;
+  }
+
   try{
     console.log(req.url);
     if (filename[1] == "Images") {
